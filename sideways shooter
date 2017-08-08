@@ -92,8 +92,8 @@ for i in range(30):
     block = Block(BLUE)
  
     # Set a random location for the block
-    block.rect.x = random.randrange(screen_width)
-    block.rect.y = random.randrange(screen_height)
+    block.rect.x = random.randrange(50, screen_width -10)
+    block.rect.y = random.randrange(10, screen_height -20)
  
     # Add the block to the list of objects
     block_list.add(block)
