@@ -46,14 +46,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
  
     def update(self):
-        """ Update the player's position. """
-        # Get the current mouse position. This returns the position
-        # as a list of two numbers.
-        # pos = pygame.mouse.get_pos()
- 
-        # Set the player x position to the mouse x position
-        # self.rect.x = pos[0]
- 
+        """ Update the player's position. """ 
  
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
@@ -62,7 +55,7 @@ class Bullet(pygame.sprite.Sprite):
         super().__init__()
  
         self.image = pygame.Surface([10, 4])
-        self.image.fill(BLACK)
+        self.image.fill(WHITE)
  
         self.rect = self.image.get_rect()
  
@@ -77,8 +70,8 @@ class Bullet(pygame.sprite.Sprite):
 pygame.init()
  
 # Set the height and width of the screen
-screen_width = 700
-screen_height = 400
+screen_width = 800
+screen_height = 300
 screen = pygame.display.set_mode([screen_width, screen_height])
  
 # --- Sprite lists
@@ -94,13 +87,13 @@ bullet_list = pygame.sprite.Group()
  
 # --- Create the sprites
  
-for i in range(50):
+for i in range(30):
     # This represents a block
     block = Block(BLUE)
  
     # Set a random location for the block
     block.rect.x = random.randrange(screen_width)
-    block.rect.y = random.randrange(350)
+    block.rect.y = random.randrange(screen_height)
  
     # Add the block to the list of objects
     block_list.add(block)
@@ -119,29 +112,29 @@ clock = pygame.time.Clock()
 score = 0
 player.xspeed = 0
 player.yspeed = 0
-player.rect.x = 10
+player.rect.x = 40
 player.rect.y = 100
- 
 # -------- Main Program Loop -----------
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
  
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.KEYDOWN:
             # Fire a bullet if the user clicks the mouse button
-            bullet = Bullet()
+            if event.key == pygame.K_z:
+                bullet = Bullet()
             # Set the bullet so it is where the player is
-            bullet.rect.x = player.rect.x + 20
-            bullet.rect.y = player.rect.y + 5
+                bullet.rect.x = player.rect.x + 20
+                bullet.rect.y = player.rect.y + 5
             # Add the bullet to the lists
-            all_sprites_list.add(bullet)
-            bullet_list.add(bullet)
+                all_sprites_list.add(bullet)
+                bullet_list.add(bullet)
 
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             # Figure out if it was an arrow key. If so
             # adjust speed.
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT and player.rect.x > 30:
                 player.xspeed = -3
             elif event.key == pygame.K_RIGHT:
                 player.xspeed = 3
@@ -152,16 +145,28 @@ while not done:
  
         # User let up on a key
         elif event.type == pygame.KEYUP:
+
             # If it is an arrow key, reset vector back to zero
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.xspeed = 0
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 player.yspeed = 0
                 
+            
     # --- Game logic
+    
+    
     player.rect.x = player.rect.x + player.xspeed
     player.rect.y = player.rect.y + player.yspeed
- 
+
+    if player.rect.x > 501:
+        player.rect.x = 500
+    elif player.rect.x < 39:
+        player.rect.x = 40
+    elif player.rect.y > 281:
+        player.rect.y = 280
+    elif player.rect.y < 0:
+        player.rect.y = 0
     # Call the update() method on all the sprites
     all_sprites_list.update()
  
@@ -179,14 +184,14 @@ while not done:
             print(score)
  
         # Remove the bullet if it flies up off the screen
-        if bullet.rect.x > 710:
+        if bullet.rect.x > 810:
             bullet_list.remove(bullet)
             all_sprites_list.remove(bullet)
  
     # --- Draw a frame
  
     # Clear the screen
-    screen.fill(WHITE)
+    screen.fill(BLACK)
  
     # Draw all the spites
     all_sprites_list.draw(screen)
