@@ -1,3 +1,4 @@
+
 """
  Simple keyboard shooter code in pygame
  
@@ -10,13 +11,15 @@
 """
 import pygame
 import random
- 
+from random import randrange
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
- 
+MAX_STARS = 50
+STAR_SPEED = 3
 # --- Classes
  
  
@@ -62,7 +65,33 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         """ Move the bullet. """
         self.rect.x += 6
+
+
+def init_stars(screen):
+  """ Create the starfield """
+  global stars
+  stars = []
+  for i in range(MAX_STARS):
+    # A star is represented as a list with this format: [X,Y]
+    star = [randrange(0,screen.get_width() - 1),
+            randrange(0,screen.get_height() - 1)]
+    stars.append(star)
  
+# starfeild
+
+def move_and_draw_stars(screen):
+  """ Move and draw the stars in the given screen """
+  global stars
+  for star in stars:
+    star[0] -= STAR_SPEED
+    # If the star hit the bottom border then we reposition
+    # it in the top of the screen with a random X coordinate.
+    if star[0] < 0:
+      star[0] = screen.get_width()
+      star[1] = randrange(0,300)
+ 
+    screen.set_at(star,(255,255,255))
+  
  
 # --- Create the window
  
@@ -73,7 +102,9 @@ pygame.init()
 screen_width = 800
 screen_height = 300
 screen = pygame.display.set_mode([screen_width, screen_height])
- 
+
+init_stars(screen)
+
 # --- Sprite lists
  
 # This is a list of every sprite. All blocks and the player block as well.
@@ -84,6 +115,7 @@ block_list = pygame.sprite.Group()
  
 # List of each bullet
 bullet_list = pygame.sprite.Group()
+
  
 # --- Create the sprites
  
@@ -92,7 +124,7 @@ for i in range(30):
     block = Block(BLUE)
  
     # Set a random location for the block
-    block.rect.x = random.randrange(50, screen_width -10)
+    block.rect.x = random.randrange(40, screen_width -10)
     block.rect.y = random.randrange(10, screen_height -20)
  
     # Add the block to the list of objects
@@ -151,22 +183,21 @@ while not done:
                 player.xspeed = 0
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 player.yspeed = 0
-                
-            
+
     # --- Game logic
-    
-    
+
+
     player.rect.x = player.rect.x + player.xspeed
     player.rect.y = player.rect.y + player.yspeed
 
-    if player.rect.x > 501:
+    if player.rect.x > 500:
         player.rect.x = 500
-    elif player.rect.x < 39:
-        player.rect.x = 40
-    elif player.rect.y > 281:
+    elif player.rect.x < 41:
+        player.rect.x = 41
+    elif player.rect.y > 280:
         player.rect.y = 280
-    elif player.rect.y < 0:
-        player.rect.y = 0
+    elif player.rect.y < 4:
+        player.rect.y = 4
     # Call the update() method on all the sprites
     all_sprites_list.update()
  
@@ -197,6 +228,7 @@ while not done:
     all_sprites_list.draw(screen)
  
     # Go ahead and update the screen with what we've drawn.
+    move_and_draw_stars(screen)
     pygame.display.flip()
  
     # --- Limit to 20 frames per second
