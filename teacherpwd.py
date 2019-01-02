@@ -6,12 +6,12 @@ maximum=input('Please enter the maximum length of any give word to be generated:
 wmaximum=input('Please enter the max number of words to be generate in the dictionary: ')
  
 alphabet = string.letters[0:52] + string.digits + string.punctuation
-string='Th4C00lTheacha'
+string=''
 FILE = open("wl.txt","w")
 for count in xrange(0,wmaximum):
   for x in random.sample(alphabet,random.randint(minimum,maximum)):
       string+=x
   FILE.write(string+'\n')
-  string='Th4C00lTheacha'
+  string=''
 FILE.close()
 print 'DONE!'
